@@ -3,4 +3,5 @@
 /lib/
 /.crystal/
 /.shards/
-csql2mongo
+/target
+out.json

@@ -1,6 +1,14 @@
 notifications:
     email: false
 
+sudo: required
 language: crystal
-before_script: make
-script: ./csql2mongo --help
+before_script:
+    - sudo apt-get install rubygems
+    - sudo gem install os
+    - ruby --version
+    - rake --version
+script: 
+    - rake
+after_script:
+    - rake test
