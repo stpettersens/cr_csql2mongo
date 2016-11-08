@@ -13,9 +13,46 @@ require "./csql2mongo/*"
 
 module Csql2mongo
   class Util
+    def preprocess_sql(lines : Array(String)) : Array(String)
+      processed = Array(String).new
+      patterns = [ "VALUES \\(", ",", "\\),", "\\(", "\n\n" ]
+      repls = [ "VALUE (\n", ",\n", "\nINSERT INTO `null` VALUES (\n", "", "\n" ]
+      lines.each do |l|
+        i = 0
+        nl = String.new
+        patterns.each do |p|
+          re = Regex.new(p)
+          nl = l.gsub(re){ |r| repls[i] }
+          i += 1
+        end
+        if nl.size > 0
+          processed.push(nl)
+        end
+      end
+      return processed
+    end
+
     def convert_sql_to_json(input : String, output : String, tz : Bool, mongo_types : Bool, 
     array : Bool, verbose : Bool)
-
+      lines = Array(String).new
+      File.each_line(input) do |l|
+        lines.push(l)
+      end
+      processed = preprocess_sql(lines)
+      fields = Array(String).new
+      values = Array(String).new
+      inserts = Array(Array(String)).new
+      headers = false
+      processed.each do |l|
+        re = Regex.new("CREATE TABLE|UNLOCK TABLES")
+        if re.match(l)
+          headers = true
+        end
+        re = Regex.new("(^[`a-zA-Z0-9_]+)")
+        if headers 
+          
+        end
+      end
     end
 
     def check_extensions(program : String, input : String, output : String)
@@ -42,7 +79,7 @@ module Csql2mongo
       puts "Utility to convert a SQL dump to a MongoDB JSON dump."
       puts "\nCopyright 2016 Sam Saint-Pettersen."
       puts "Licensed under the MIT/X11 License."
-      puts "Usage: #{program} -f|--file <input.sql> -o|--out <output.json>"
+      puts "\nUsage: #{program} -f|--file <input.sql> -o|--out <output.json>"
       puts "-t|--tz -n|--no-mongo-types -a|--array -i|--ignore-ext -l|--verbose [-v|--version][-h|--help]"
       puts "\n-f|--file: SQL file to convert."
       puts "-o|--out: MongoDB JSON file as output."

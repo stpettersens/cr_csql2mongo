@@ -38,4 +38,3 @@ INSERT INTO `sample` VALUES (
 1.75,
 '2015-01-01 08:00:00',
 FALSE);
-
