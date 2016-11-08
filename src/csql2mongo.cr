@@ -48,11 +48,42 @@ module Csql2mongo
         if re.match(l)
           headers = true
         end
-        re = Regex.new("(^[`a-zA-Z0-9_]+)")
-        if headers 
-          
+        if headers
+          re = Regex.new("(^[`a-zA-Z0-9_]+)")
+          f = re.match(l).try &.[1] 
+          if f != Nil
+            fields.push(f.to_s)
+          end
+        else
+          re = Regex.new("(^[0-9\.]+)")
+          v = re.match(l).try &.[1]
+          if v != Nil
+            values.push(v.to_s)
+          end
+        end
+        re = Regex.new("INSERT INTO")
+        if re.match(l)
+          headers = false
         end
       end
+      ffields = Array(String).new
+      fvalues = Array(String).new
+      fields.each do |f|
+        re = Regex.new("CREATE|ENGINE|INSERT|PRIMARY|LOCK")
+        if !re.match(f)
+          if f.size == 0
+            break
+          end
+          ffields.push(f)
+        end
+      end
+      values.each do |v|
+        if v.size > 0
+          fvalues.push(v)
+        end
+      end
+      puts ffields
+      puts fvalues
     end
 
     def check_extensions(program : String, input : String, output : String)
