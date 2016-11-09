@@ -55,10 +55,23 @@ module Csql2mongo
             fields.push(f.to_s)
           end
         else
-          re = Regex.new("(^[0-9\.]+)")
+          # re = Regex.new("(^[0-9\.]+)")
+          re = Regex.new("(0-9{4}\-0-9{4})")
           v = re.match(l).try &.[1]
           if v != Nil
             values.push(v.to_s)
+          end
+          #re = Regex.new("([a-zA-Z 0-9]+)")
+          #v = re.match(l).try &.[1]
+          #if v != Nil
+            #if !/^--/.match(l)
+              #values.push(v.to_s)
+            #end
+          #end
+          re = Regex.new("(TRUE|FALSE|NULL)")
+          v = re.match(l).try &.[1]
+          if v != Nil
+            values.push(v.to_s.downcase)
           end
         end
         re = Regex.new("INSERT INTO")
@@ -78,7 +91,7 @@ module Csql2mongo
         end
       end
       values.each do |v|
-        if v.size > 0
+        if !/DROP|INSERT|TRUE|FALSE|NULL/.match(v) && v.size > 0
           fvalues.push(v)
         end
       end
