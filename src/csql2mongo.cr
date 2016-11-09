@@ -49,30 +49,32 @@ module Csql2mongo
           headers = true
         end
         if headers
-          re = Regex.new("(^[`a-zA-Z0-9_]+)")
+          re = Regex.new("(^[\`a-zA-Z0-9_]+)")
           f = re.match(l).try &.[1] 
           if f != Nil
             fields.push(f.to_s)
           end
         else
-          # re = Regex.new("(^[0-9\.]+)")
-          re = Regex.new("(0-9{4}\-0-9{4})")
-          v = re.match(l).try &.[1]
-          if v != Nil
-            values.push(v.to_s)
+	  re = Regex.new("(^[0-9\.]+)")
+	  v = re.match(l).try &.[1]
+	  if v != Nil
+	    values.push(v.to_s)
           end
-          #re = Regex.new("([a-zA-Z 0-9]+)")
-          #v = re.match(l).try &.[1]
-          #if v != Nil
-            #if !/^--/.match(l)
-              #values.push(v.to_s)
-            #end
-          #end
+	  re = Regex.new("'([a-zA-Z0-9]+)'")
+	  v = re.match(l).try &.[1]
+	  if v != Nil
+	    values.push("#{v.to_s}")
+	  end
           re = Regex.new("(TRUE|FALSE|NULL)")
           v = re.match(l).try &.[1]
           if v != Nil
             values.push(v.to_s.downcase)
           end
+	  re = Regex.new("([0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}\:[0-9]{2}\:[0-9]{2})")
+	  v = re.match(l).try &.[1]
+	  if v != Nil
+	    values.push(v.to_s)
+	  end
         end
         re = Regex.new("INSERT INTO")
         if re.match(l)
