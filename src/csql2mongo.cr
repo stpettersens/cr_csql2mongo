@@ -55,26 +55,26 @@ module Csql2mongo
             fields.push(f.to_s)
           end
         else
-	  re = Regex.new("(^[0-9\.]+)")
-	  v = re.match(l).try &.[1]
-	  if v != Nil
-	    values.push(v.to_s)
+	        re = Regex.new("(^[0-9\.]+)")
+	        v = re.match(l).try &.[1]
+	        if v != Nil
+	          values.push(v.to_s)
           end
-	  re = Regex.new("'([a-zA-Z0-9]+)'")
-	  v = re.match(l).try &.[1]
-	  if v != Nil
-	    values.push("#{v.to_s}")
-	  end
+	        re = Regex.new("'([a-zA-Z0-9]+)'")
+	        v = re.match(l).try &.[1]
+	        if v != Nil
+	          values.push(v.to_s)
+	        end
           re = Regex.new("(TRUE|FALSE|NULL)")
           v = re.match(l).try &.[1]
           if v != Nil
             values.push(v.to_s.downcase)
           end
-	  re = Regex.new("([0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}\:[0-9]{2}\:[0-9]{2})")
-	  v = re.match(l).try &.[1]
-	  if v != Nil
-	    values.push(v.to_s)
-	  end
+	        re = Regex.new("([0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}\:[0-9]{2}\:[0-9]{2})")
+	        v = re.match(l).try &.[1]
+	        if !/--/.match(l) && v != Nil
+	          values.push(v.to_s.gsub(" ", "T"))
+	        end
         end
         re = Regex.new("INSERT INTO")
         if re.match(l)
@@ -97,8 +97,21 @@ module Csql2mongo
           fvalues.push(v)
         end
       end
-      puts ffields
-      puts fvalues
+      fvalues.each_slice(ffields.size) do |v|
+        inserts.push(v) 
+      end
+      inserts.each do |vv|
+        vv.each do |v|
+          if /T[0-9]{2}/.match(v)
+            fv = v + ".000"
+            if tz
+              fv += "Z"
+            else
+              fv += "+0000"
+            end
+          end
+        end
+      end
     end
 
     def check_extensions(program : String, input : String, output : String)
