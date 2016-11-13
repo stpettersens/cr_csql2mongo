@@ -178,7 +178,7 @@ module Csql2mongo
           array = true
         elsif /-i|--ignore-ext/.match(a)
           extensions = false
-        elsif /-l|--verbise/.match(a)
+        elsif /-l|--verbose/.match(a)
           verbose = true
         end
         i += 1      
