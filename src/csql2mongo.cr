@@ -161,24 +161,24 @@ module Csql2mongo
       array = false
       extensions = true
       verbose = false
-      ARGV.each do |arg|
-        if /-h|--help/.match(arg)
+      ARGV.each do |a|
+        if /-h|--help/.match(a)
           display_usage($0, 0)
-        elsif /-v|--version/.match(arg)
+        elsif /-v|--version/.match(a)
           display_version()
-        elsif /-f|--file/.match(arg)
+        elsif /-f|--file/.match(a)
           input = ARGV[i + 1]
-        elsif /-o|--out/.match(arg)
+        elsif /-o|--out/.match(a)
           output = ARGV[i + 1]
-        elsif /-tz|--tz/.match(arg)
+        elsif /-tz|--tz/.match(a)
           tz = true
-        elsif /-n|--no-mongo-types/.match(arg)
+        elsif /-n|--no-mongo-types/.match(a)
           mongo_types = false
-        elsif /-a|--array/.match(arg) 
+        elsif /-a|--array/.match(a) 
           array = true
-        elsif /-i|--ignore-ext/.match(arg)
+        elsif /-i|--ignore-ext/.match(a)
           extensions = false
-        elsif /-l|--verbise/.match(arg)
+        elsif /-l|--verbise/.match(a)
           verbose = true
         end
         i += 1      
