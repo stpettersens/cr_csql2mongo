@@ -5,3 +5,6 @@
 /.shards/
 /target
 out.json
+pass.txt
+compile.sh
+prog.sh

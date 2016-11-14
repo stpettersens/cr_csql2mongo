@@ -13,18 +13,20 @@ target = "#{out}/#{app}"
 task :default do
     puts "Building #{app}..."
     FileUtils.mkdir_p(out)
-    sh "crystal #{src} -o #{target}"
+    if OS.windows? then
+        sh "crystal.cmd #{IO.read("pass.txt").chomp!} #{src} #{target}"
+    else
+        sh "crystal #{src} -o #{target}"
+    end
 end
 
 task :test do
-    sh "#{target} --help"
-    puts
-    sh "#{target} -f sample.sql -o out.json"
-    sh "touch out.json"
-    puts
     if OS.windows? then
-        sh "type out.json"
+        sh "run.cmd #{IO.read("pass.txt").chomp!} #{target} --help"
     else
+        sh "#{target} --help"
+        puts
+        sh "#{target} -f sample.sql -o out.json"
         sh "cat out.json"
     end
 end
