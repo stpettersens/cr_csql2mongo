@@ -125,7 +125,8 @@ module Csql2mongo
           elsif /[a-zA-Z]/.match(v)
             v = "\"#{v}\""
           end
-          fr.push("\"#{ffields[i]}\":#{v}")
+          fr.push("\"#{ffields[ii]}\":#{v}")
+          ii += 1
         end
         json.push("{#{fr.join(",")}}")
       end
