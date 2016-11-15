@@ -23,14 +23,15 @@ end
 task :test do
     if OS.windows? then
         rtarget = "run.cmd #{IO.read("pass.txt").chomp!} #{target}"
-        #sh "#{rtarget} --help"
-        #puts
+        sh "#{rtarget} --help"
+        puts
         sh "#{rtarget} -f sample.sql -o out.json -l"
     else
         sh "touch out.json" # !!!
         sh "#{target} --help"
         puts
-        sh "#{target} -f sample.sql -o out.json --loud -a"
+        sh "#{target} -f sample.sql -o out.json --loud"
+        puts
         sh "cat out.json"
     end
 end
