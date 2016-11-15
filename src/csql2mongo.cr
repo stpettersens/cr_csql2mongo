@@ -102,11 +102,10 @@ module Csql2mongo
       end
       
       json = Array(String).new
-      no_comma = inserts.size - 1
-      i = 0
+      ac = String.new
       inserts.each do |r|
         fr = Array(String).new
-        ii = 0
+        x = 0
         r.each do |v|
           if /T[0-9]{2}:/.match(v)
             v = v + ".000"
@@ -116,21 +115,42 @@ module Csql2mongo
               v = v + "+0000"
             end
             if mongo_types
-              v = "{$date:\"#{v}\"}"
+              v = "{\"$date\":\"#{v}\"}"
             else
               v = "\"#{v}\""
             end
           elsif /true|false|null/.match(v)
             # ...
           elsif /[a-zA-Z]/.match(v)
-            v = "\"#{v}\""
+            if ffields[x] == "_id"
+              v = "{\"$oid\":\"#{v}\"}"
+            else
+              v = "\"#{v}\""
+            end
           end
-          fr.push("\"#{ffields[ii]}\":#{v}")
-          ii += 1
+          fr.push("\"#{ffields[x]}\":#{v}")
+          if array
+            ac = ","
+          end
+          x += 1
         end
-        json.push("{#{fr.join(",")}}")
+        json.push("{#{fr.join(",")}}#{ac}")
       end
-      puts json
+
+      if array
+        json.insert(0, "[")
+        last = json[json.size - 1]
+        json[json.size - 1] = last[0..last.size - 2]
+        json.push("]")
+      end
+      json.push(String.new)
+
+      if verbose 
+        puts "Generating MongoDB JSON dump file '#{output}' from"
+        puts "SQL dump file: '#{input}'.\n"
+      end
+
+      File.write(output, json.join("\n"))
     end
 
     def check_extensions(program : String, input : String, output : String)
@@ -197,7 +217,7 @@ module Csql2mongo
           array = true
         elsif /-i|--ignore-ext/.match(a)
           extensions = false
-        elsif /-l|--verbose/.match(a)
+        elsif /-l|--loud/.match(a)
           verbose = true
         end
         i += 1      

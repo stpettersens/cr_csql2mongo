@@ -25,12 +25,12 @@ task :test do
         rtarget = "run.cmd #{IO.read("pass.txt").chomp!} #{target}"
         #sh "#{rtarget} --help"
         #puts
-        sh "#{rtarget} -f sample.sql -o out.json"
+        sh "#{rtarget} -f sample.sql -o out.json -l"
     else
         sh "touch out.json" # !!!
         sh "#{target} --help"
         puts
-        sh "#{target} -f sample.sql -o out.json"
+        sh "#{target} -f sample.sql -o out.json --loud -a"
         sh "cat out.json"
     end
 end
