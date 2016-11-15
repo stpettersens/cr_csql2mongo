@@ -14,7 +14,7 @@ task :default do
     puts "Building #{app}..."
     FileUtils.mkdir_p(out)
     if OS.windows? then
-        sh "crystal.cmd #{IO.read("pass.txt").chomp!} #{src} #{target}"
+        sh "crystal.cmd #{IO.read("pass.txt").chomp!} #{src} #{target} sample.sql"
     else
         sh "crystal #{src} -o #{target}"
     end
@@ -22,7 +22,10 @@ end
 
 task :test do
     if OS.windows? then
-        sh "run.cmd #{IO.read("pass.txt").chomp!} #{target} --help"
+        rtarget = "run.cmd #{IO.read("pass.txt").chomp!} #{target}"
+        sh "#{rtarget} --help"
+        puts
+        sh "#{rtarget} -f sample.sql -o out.json"
     else
         sh "#{target} --help"
         puts
