@@ -100,18 +100,36 @@ module Csql2mongo
       fvalues.each_slice(ffields.size) do |v|
         inserts.push(v) 
       end
-      inserts.each do |vv|
-        vv.each do |v|
-          if /T[0-9]{2}/.match(v)
-            fv = v + ".000"
-            if tz
-              fv += "Z"
+      
+      json = Array(String).new
+      no_comma = inserts.size - 1
+      i = 0
+      inserts.each do |r|
+        fr = Array(String).new
+        ii = 0
+        r.each do |v|
+          if /T[0-9]{2}:/.match(v)
+            v = v + ".000"
+            if tz 
+              v = v + "Z"
             else
-              fv += "+0000"
+              v = v + "+0000"
             end
+            if mongo_types
+              v = "{$date:\"#{v}\"}"
+            else
+              v = "\"#{v}\""
+            end
+          elsif /true|false|null/.match(v)
+            # ...
+          elsif /[a-zA-Z]/.match(v)
+            v = "\"#{v}\""
           end
+          fr.push("\"#{ffields[i]}\":#{v}")
         end
+        json.push("{#{fr.join(",")}}")
       end
+      puts json
     end
 
     def check_extensions(program : String, input : String, output : String)
