@@ -27,7 +27,6 @@ task :test do
         puts
         sh "#{rtarget} -f sample.sql -o out.json -l"
     else
-        sh "touch out.json" # !!!
         sh "#{target} --help"
         puts
         sh "#{target} -f sample.sql -o out.json --loud"

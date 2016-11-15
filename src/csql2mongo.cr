@@ -15,8 +15,8 @@ module Csql2mongo
   class Util
     def preprocess_sql(lines : Array(String)) : Array(String)
       processed = Array(String).new
-      patterns = [ "VALUES \\(", ",", "\\),", "\\(", "\n\n" ]
-      repls = [ "VALUE (\n", ",\n", "\nINSERT INTO `null` VALUES (\n", "", "\n" ]
+      patterns = [ "VALUES \\(", ",", "\\),", "\\(", "\n\n", "\/.*", "--.*" ]
+      repls = [ "VALUE (\n", ",\n", "\nINSERT INTO `null` VALUES (\n", "", "\n", "", "" ]
       lines.each do |l|
         i = 0
         nl = String.new
@@ -25,24 +25,11 @@ module Csql2mongo
           nl = l.gsub(re){ |r| repls[i] }
           i += 1
         end
-        if nl.size > 0
+        if nl.size > 1
           processed.push(nl)
         end
       end
-
-      # START DEBUG PARSE
-      #puts processed.size
-      #i = 0
-      #processed.each do |p|
-        #if i == 100
-          #break
-        #end
-        #puts p
-        #i += 1
-      #end
-      #exit(1)
-      # END DEBUG PARSE
-      
+      puts processed.size # !!!
       return processed
     end
 
@@ -57,6 +44,7 @@ module Csql2mongo
       values = Array(String).new
       inserts = Array(Array(String)).new
       headers = false
+      z = 0
       processed.each do |l|
         re = Regex.new("CREATE TABLE|UNLOCK TABLES")
         if re.match(l)
@@ -94,6 +82,7 @@ module Csql2mongo
         if re.match(l)
           headers = false
         end
+        z += 1 # !!!
       end
       ffields = Array(String).new
       fvalues = Array(String).new
