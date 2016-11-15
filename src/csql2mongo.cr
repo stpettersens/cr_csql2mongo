@@ -29,6 +29,20 @@ module Csql2mongo
           processed.push(nl)
         end
       end
+
+      # START DEBUG PARSE
+      #puts processed.size
+      #i = 0
+      #processed.each do |p|
+        #if i == 100
+          #break
+        #end
+        #puts p
+        #i += 1
+      #end
+      #exit(1)
+      # END DEBUG PARSE
+      
       return processed
     end
 
