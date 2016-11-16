@@ -8,3 +8,4 @@ out.json
 pass.txt
 compile.sh
 prog.sh
+out.sql
