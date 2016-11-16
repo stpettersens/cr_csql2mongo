@@ -29,7 +29,7 @@ task :test do
     else
         sh "#{target} --help"
         puts
-        sh "#{target} -f world.sql -o out.json --loud"
+        sh "#{target} -f sample.sql -o out.json --loud"
         puts
         sh "cat out.json"
     end
