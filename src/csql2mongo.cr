@@ -15,22 +15,35 @@ module Csql2mongo
   class Util
     def preprocess_sql(lines : Array(String)) : Array(String)
       processed = Array(String).new
-      patterns = [ "VALUES \\(", ",", "\\),", "\\(", "\n\n", "--.*" ]
-      repls = [ "VALUES (\n", ",\n", "\nINSERT INTO `null` VALUES (\n", "", "\n", "" ]
+      patterns = [ "\n\n", "--.*" ]
+      repls = [ "\n", "" ]
       lines.each do |l|
         i = 0
-        nl = String.new
+        nl = l
         patterns.each do |p|
           re = Regex.new(p)
-          nl = l.gsub(re){ |r| repls[i] }
+          nl = nl.gsub(re){ |r| repls[i] }
           i += 1
         end
         if nl.size > 1 && !/\//.match(nl)
+          if /VALUES/.match(nl)
+            v1 = nl.split("(")
+            v2  = v1.join("!").split(",")
+            v2[0] = "#{v2[0]}"
+            v2[v2.size - 1] = ")"
+            v3 = "#{v2.join(",\n")}\n"
+            v4 = v3.split("!")
+            v4[0] = "#{v4[0]}(\n"
+            v4[1] = v4[1].gsub(/(\,).*/) { |r| "" }
+            nl = v4.join("")
+            puts nl # !!!
+          end
           processed.push(nl)
         end
       end
       puts processed.size # !!!
       File.write("out.sql", processed.join(""))
+      exit(1) # !!!
       return processed
     end
 
