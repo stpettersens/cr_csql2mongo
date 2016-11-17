@@ -47,8 +47,8 @@ module Csql2mongo
       headers = false
       z = 0
       processed.each do |l|
-	puts "z index: #{z}" # !!!
-	puts "p: #{l}"
+	      #puts "z index: #{z}" # !!!
+	      #puts "p: #{l}"
         re = Regex.new("CREATE TABLE|UNLOCK TABLES")
         if re.match(l)
           headers = true
@@ -206,6 +206,7 @@ module Csql2mongo
       array = false
       extensions = true
       verbose = false
+      puts ARGV
       ARGV.each do |a|
         if /-h|--help/.match(a)
           display_usage($0, 0)
