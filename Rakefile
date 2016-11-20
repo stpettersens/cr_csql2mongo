@@ -9,12 +9,13 @@ app = "csql2mongo"
 out = "target/release"
 src = "src/#{app}.cr"
 target = "#{out}/#{app}"
+pass = IO.read("pass.txt").chomp!
 
 task :default do
     puts "Building #{app}..."
     FileUtils.mkdir_p(out)
     if OS.windows? then
-        sh "crystal.cmd #{IO.read("pass.txt").chomp!} #{src} #{target} sample.sql"
+        sh "crystal.cmd #{pass} #{src} #{target} sample.sql"
     else
         sh "crystal #{src} -o #{target}"
     end
@@ -22,7 +23,7 @@ end
 
 task :test do
     if OS.windows? then
-        run = "run.cmd #{IO.read("pass.txt").chomp!}"
+        run = "run.cmd #{pass}"
         sh "#{run} #{target} --help"
         puts
         sh "#{run} #{target} -f sample.sql -o out.json --loud"
