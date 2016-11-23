@@ -24,7 +24,7 @@ end
 task :test do
     if OS.windows? or ARGV[1] == "remote" then
         pass = IO.read("pass.txt").chomp!
-        run = "run.cmd #{pass}"
+        run = "ruby run.rb #{pass}"
         sh "#{run} #{target} --help"
         puts
         sh "#{run} #{target} -f sample.sql -o out.json --loud"

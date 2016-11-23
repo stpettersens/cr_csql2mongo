@@ -1,6 +1,10 @@
-# Compile with Crystal compiler running on local linux server.
+# Compile with Crystal compiler running on local Linux server.
+
+require 'rake'
+
 USER = "compiler"
-IP = 192.168.0.18
-exec("echo crystal #{ARGV[2]} -o #{ARGV[3]} > compile.sh") 
-exec("pscp -pw #{ARGV[1]} -r src compile.sh #{ARGV[4]} #{USER}@#{IP}:job")
-exec("plink -ssh #{USER}@#{IP} -pw #{ARGV[1]} -m compiler.txt -t")
+IP = "192.168.0.18"
+
+sh "echo crystal #{ARGV[1]} -o #{ARGV[2]} > compile.sh"
+sh "pscp -pw #{ARGV[0]} -r src compile.sh #{ARGV[3]} #{USER}@#{IP}:job"
+sh "plink -ssh #{USER}@#{IP} -pw #{ARGV[0]} -m compiler.txt -t"
