@@ -2,8 +2,11 @@
 
 require 'rake'
 
-USER = "compiler"
-IP = "192.168.0.18"
+c = IO.read("config.txt").chomp!
+uh = c.split("@")
+
+USER = uh[0]
+IP = uh[1]
 
 args = []
 for i in 1..ARGV.size do

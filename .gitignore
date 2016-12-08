@@ -5,6 +5,7 @@
 /.shards/
 /target
 out.json
+config.txt
 pass.txt
 compile.sh
 prog.sh
