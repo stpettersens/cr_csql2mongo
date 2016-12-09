@@ -2,11 +2,7 @@
 
 require 'rake'
 
-c = IO.read("config.txt").chomp!
-uh = c.split("@")
-
-USER = uh[0]
-IP = uh[1]
+USER_IP = IO.read("config.txt").chomp!
 
 args = []
 for i in 1..ARGV.size do
@@ -14,5 +10,5 @@ for i in 1..ARGV.size do
 end
 
 sh "echo #{args.join(" ")} > prog.sh"
-sh "pscp -pw #{ARGV[0]} prog.sh #{USER}@#{IP}:job"
-sh "plink -ssh #{USER}@#{IP} -pw #{ARGV[0]} -m runner.txt -t"
+sh "pscp -pw #{ARGV[0]} prog.sh #{USER_IP}:job"
+sh "plink -ssh #{USER_IP} -pw #{ARGV[0]} -m runner.txt -t"
